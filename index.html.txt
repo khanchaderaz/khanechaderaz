@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>گزارش ترافیک طرقبه و شاندیز</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 30px 0;
+        }
+        .container {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            width: 380px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #2c3e50;
+        }
+        .date {
+            text-align: center;
+            font-size: 14px;
+            color: #555;
+            margin-bottom: 25px;
+        }
+        .box {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px 0;
+            background: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #27632a;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>آخرین وضعیت طرقبه، شاندیز و اطراف</h1>
+        <div class="date" id="todayDate"></div>
+
+        <div class="box">
+            <label for="day">روز:</label>
+            <select id="day">
+                <option value="شنبه">شنبه</option>
+                <option value="یکشنبه">یکشنبه</option>
+                <option value="دوشنبه">دوشنبه</option>
+                <option value="سه‌شنبه">سه‌شنبه</option>
+                <option value="چهارشنبه">چهارشنبه</option>
+                <option value="پنج‌شنبه">پنج‌شنبه</option>
+                <option value="جمعه">جمعه</option>
+            </select>
+        </div>
+
+        <div class="box">
+            <label for="traffic">ترافیک:</label>
+            <select id="traffic">
+                <option value="کم">کم</option>
+                <option value="متوسط">متوسط</option>
+                <option value="زیاد">زیاد</option>
+            </select>
+        </div>
+
+        <button onclick="generatePDF()">گزارش گیری</button>
+    </div>
+
+    <script>
+        // نمایش تاریخ امروز به فارسی
+        const dateEl = document.getElementById("todayDate");
+        const months = ["فروردین","اردیبهشت","خرداد","تیر","مرداد","شهریور","مهر","آبان","آذر","دی","بهمن","اسفند"];
+        const today = new Date();
+        const persianDate = today.getDate() + " " + months[today.getMonth()] + " " + today.getFullYear();
+        dateEl.textContent = "تاریخ امروز: " + persianDate;
+
+        async function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            const day = document.getElementById("day").value;
+            const traffic = document.getElementById("traffic").value;
+
+            let color = "#2e7d32"; // پیش‌فرض سبز
+            if(traffic === "متوسط") color = "#f1c40f";
+            if(traffic === "زیاد") color = "#c0392b";
+
+            doc.setFontSize(16);
+            doc.text("گزارش ترافیک طرقبه و شاندیز", 105, 20, {align: "center"});
+
+            doc.setFontSize(14);
+            doc.text("تاریخ امروز: " + persianDate, 20, 40);
+            doc.text("روز: " + day, 20, 50);
+            
+            doc.setTextColor(color);
+            doc.text("ترافیک: " + traffic, 20, 60);
+            doc.setTextColor(0,0,0); // بازگرداندن رنگ متن سیاه
+
+            doc.save("Traffic_Report.pdf");
+        }
+    </script>
+</body>
+</html>
